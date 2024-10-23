@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.hospitalapi.dtos.get.GetEmployeeResponse;
-import org.example.hospitalapi.dtos.get.GetPatientResponse;
+import org.example.hospitalapi.dtos.EmployeeResponse;
+import org.example.hospitalapi.dtos.PostEmployeeRequest;
 import org.example.hospitalapi.model.Employee;
-import org.example.hospitalapi.model.Patient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,11 +23,19 @@ public class EmployeeMapper {
   @Autowired
   private ModelMapper modelMapper = new ModelMapper();
 
-  public GetEmployeeResponse toDtoGetEmployeeResponse(Employee employee) {
-    return modelMapper.map(employee, GetEmployeeResponse.class);
+  public EmployeeResponse fromEmployeeToDtoEmployeeResponse(Employee employee) {
+    return modelMapper.map(employee, EmployeeResponse.class);
   }
 
-  public List<GetEmployeeResponse> toDtoGetEmployeesResponseList(List<Employee> employees) {
-    return employees.stream().map(this::toDtoGetEmployeeResponse).collect(Collectors.toList());
+  public List<EmployeeResponse> fromEmployeeListToDtoGetEmployeeResponseList(List<Employee> employees) {
+    return employees.stream().map(this::fromEmployeeToDtoEmployeeResponse).collect(Collectors.toList());
+  }
+
+  public Employee fromDtoEmployeeResponseToEmployee(EmployeeResponse employeeResponse) {
+    return modelMapper.map(employeeResponse, Employee.class);
+  }
+
+  public Employee fromDtoPostEmployeeRequestToEmployee(PostEmployeeRequest postEmployeeRequest) {
+    return modelMapper.map(postEmployeeRequest, Employee.class);
   }
 }

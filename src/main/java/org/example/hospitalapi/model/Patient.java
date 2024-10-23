@@ -3,6 +3,7 @@ package org.example.hospitalapi.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@DynamicUpdate
 public class Patient {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +24,7 @@ public class Patient {
   private String name;
   @Column(name = "patient_date_of_birth")
   private LocalDate dateOfBirth;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "admitted_by")
   @JsonBackReference
   private Employee admittedBy;

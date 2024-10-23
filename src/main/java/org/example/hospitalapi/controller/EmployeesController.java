@@ -1,17 +1,15 @@
 package org.example.hospitalapi.controller;
 
-import org.example.hospitalapi.dtos.get.GetEmployeeResponse;
-import org.example.hospitalapi.dtos.get.GetPatientResponse;
-import org.example.hospitalapi.enums.EmployeeStatus;
-import org.example.hospitalapi.model.Employee;
+import jakarta.validation.Valid;
+import org.example.hospitalapi.dtos.EmployeeResponse;
+import org.example.hospitalapi.dtos.PostEmployeeRequest;
+import org.example.hospitalapi.dtos.UpdateEmployeeStatusRequest;
+import org.example.hospitalapi.mapper.EmployeeMapper;
 import org.example.hospitalapi.repository.EmployeeRepository;
 import org.example.hospitalapi.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,63 +22,49 @@ public class EmployeesController {
   EmployeeRepository employeesRepository;
   @Autowired
   private EmployeeService employeeService;
+  @Autowired
+  private EmployeeMapper employeeMapper;
 
-  @GetMapping("/getAllEmployees")
-  public ResponseEntity<List<Employee>> allEmployes(){
-    List<Employee> employee = employeesRepository.findAll();
-    if(!employee.isEmpty()){
-      return ResponseEntity.ok(employee);
-    }else{
-      return ResponseEntity.notFound().build();
-    }
+  @GetMapping("/employees")
+  public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+    List<EmployeeResponse> employees = employeeService.getAllEmployees();
+    return employees.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(employees);
   }
 
-  @GetMapping("/findById/{id}")
-  public ResponseEntity<GetEmployeeResponse> getEmployesById(
-          @PathVariable Long id
-  ){
-    Optional<GetEmployeeResponse> employee = employeeService.getEmployeeById(id);
+  @GetMapping("/employee/{id}")
+  public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
+    Optional<EmployeeResponse> employee = employeeService.getEmployeeById(id);
     return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @GetMapping("/findByStatus/{status}")
-  public ResponseEntity<List<Employee>> getEmployesByStatus(
-          @PathVariable int status
-  ){
-    List<Employee> employee;
-    if (status == 0){
-     employee = employeesRepository.findAllByEmployeeStatus(EmployeeStatus.ON_CALL);
-      return somethingToResponse(employee);
-    }else if (status == 1){
-     employee = employeesRepository.findAllByEmployeeStatus(EmployeeStatus.ON);
-      return somethingToResponse(employee);
-    }else if (status == 2){
-     employee = employeesRepository.findAllByEmployeeStatus(EmployeeStatus.OFF);
-     return somethingToResponse(employee);
-    }else {
-      return ResponseEntity.notFound().build();
-    }
+  /**
+   * Endpoint to get all employees with same status.
+   *
+   * @param status Must be exactly value of enum: ON_CALL, ON, OFF
+   * @return Returns a ResponseEntity<List<GetEmployeeResponse>> with that contain a List of EmployeeReponse, can be empty.
+   */
+  @GetMapping("/employeeByStatus/{status}")
+  public ResponseEntity<List<EmployeeResponse>> getEmployeesByStatus(@PathVariable String status) {
+    List<EmployeeResponse> employee = employeeService.getEmployesByStatus(status);
+    return employee.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(employee);
   }
 
-  public ResponseEntity<List<Employee>> somethingToResponse(List<Employee> employee){
-    if(!employee.isEmpty()){
-      return ResponseEntity.ok(employee);
-    }else {
-      return ResponseEntity.notFound().build();
-    }
+  @GetMapping("/employeeByDepartment/{department}")
+  public ResponseEntity<List<EmployeeResponse>> getEmployeesByDepartment(@PathVariable String department) {
+    List<EmployeeResponse> employees = employeeService.getEmployeesByDepartment(department);
+    return employees.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(employees);
   }
 
-  @GetMapping("/findByDepartment/{department}")
-  public ResponseEntity<List<Employee>> getEmployesByDepartment(
-          @PathVariable String department
-  ){
-    List<Employee> employee = employeesRepository.findAllByDepartment(department);
-    if(!employee.isEmpty()){
-      return ResponseEntity.ok(employee);
-    }else{
-      return ResponseEntity.notFound().build();
-    }
+  @PostMapping("/createEmployee")
+  public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody @Valid PostEmployeeRequest postEmployeeRequest){
+    Optional<EmployeeResponse> employeeResponse = employeeService.createEmployee(postEmployeeRequest);
+    return employeeResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
   }
 
+  @PatchMapping("/{id}/updateEmployeeStatus")
+  public ResponseEntity<EmployeeResponse> updateEmployeeStatus (@PathVariable Long id ,@RequestBody @Valid UpdateEmployeeStatusRequest updateEmployeeStatusRequest){
+    Optional<EmployeeResponse> employeeResponse = employeeService.updateStatusEmployee(id, updateEmployeeStatusRequest);
+    return employeeResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  }
 
 }

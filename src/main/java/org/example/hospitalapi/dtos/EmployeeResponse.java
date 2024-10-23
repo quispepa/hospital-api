@@ -1,10 +1,5 @@
-package org.example.hospitalapi.dtos.get;
+package org.example.hospitalapi.dtos;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import lombok.*;
 import org.example.hospitalapi.enums.EmployeeStatus;
 import org.example.hospitalapi.model.Patient;
@@ -15,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class GetEmployeeResponse {
+public class EmployeeResponse {
   private Long id;
   private String department;
   private String name;

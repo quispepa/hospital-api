@@ -1,6 +1,7 @@
-package org.example.hospitalapi.dtos.post;
+package org.example.hospitalapi.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
@@ -17,5 +18,6 @@ public class PostPatientRequest {
   @Past
   private LocalDate dateOfBirth;
   @PositiveOrZero
-  private Long employeeId;
+  @NotNull
+    private Long employee;
 }

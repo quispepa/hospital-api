@@ -22,15 +22,16 @@ public class Initializer implements CommandLineRunner {
   private PatientRepository patientRepository;
   @Override
   public void run(String... args) throws Exception {
+
   }
 
   public void saveData(){
-    Employee employee1 = new Employee(null, "cardiology" ,"Alonso Flores", EmployeeStatus.ON_CALL, new ArrayList<>());
-    Employee employee2 = new Employee(null, "immunology" ,"Sam Ortega", EmployeeStatus.ON, new ArrayList<>());
-    Employee employee3 = new Employee(null, "cardiology" ,"German Ruiz", EmployeeStatus.OFF, new ArrayList<>());
-    Employee employee4 = new Employee(null, "pulmonary" ,"Maria Lin", EmployeeStatus.ON, new ArrayList<>());
-    Employee employee5 = new Employee(null, "orthopaedic" ,"Paolo Rodriguez", EmployeeStatus.ON_CALL, new ArrayList<>());
-    Employee employee6 = new Employee(null, "psychiatric" ,"John Paul Armes", EmployeeStatus.OFF, new ArrayList<>());
+    Employee employee1 = new Employee("cardiology" ,"Alonso Flores", EmployeeStatus.ON_CALL);
+    Employee employee2 = new Employee("immunology" ,"Sam Ortega", EmployeeStatus.ON);
+    Employee employee3 = new Employee("cardiology" ,"German Ruiz", EmployeeStatus.OFF);
+    Employee employee4 = new Employee("pulmonary" ,"Maria Lin", EmployeeStatus.ON);
+    Employee employee5 = new Employee("orthopaedic" ,"Paolo Rodriguez", EmployeeStatus.ON_CALL);
+    Employee employee6 = new Employee("psychiatric" ,"John Paul Armes", EmployeeStatus.OFF);
     employeesRepository.saveAll(Arrays.asList(employee1, employee2, employee3, employee4, employee5, employee6));
 
     Patient patient1 = new Patient(null, "Jaime Jordan", LocalDate.of(1984, 3, 2), employee2);

@@ -1,9 +1,9 @@
 package org.example.hospitalapi.controller;
 
 import jakarta.validation.Valid;
-import org.example.hospitalapi.dtos.get.GetPatientResponse;
-import org.example.hospitalapi.dtos.post.PostPatientRequest;
-import org.example.hospitalapi.dtos.post.PostPatientResponse;
+import org.example.hospitalapi.dtos.PatientResponse;
+import org.example.hospitalapi.dtos.PostPatientRequest;
+import org.example.hospitalapi.dtos.UpdatePatientRequest;
 import org.example.hospitalapi.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ public class PatientController {
   private PatientService patientService;
 
   @GetMapping("/getAllPatients")
-  public ResponseEntity<List<GetPatientResponse>> getAllPatients() {
-    List<GetPatientResponse> getPatientsResponse = patientService.getAllPatients();
+  public ResponseEntity<List<PatientResponse>> getAllPatients() {
+    List<PatientResponse> getPatientsResponse = patientService.getAllPatients();
     if (!getPatientsResponse.isEmpty()) {
       return ResponseEntity.ok(getPatientsResponse);
     } else {
@@ -30,8 +30,8 @@ public class PatientController {
   }
 
   @GetMapping("/getPatientById/{id}")
-  public ResponseEntity<GetPatientResponse> getPatientById(@PathVariable Long id) {
-    Optional<GetPatientResponse> getPatientResponse = patientService.getPatientById(id);
+  public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id) {
+    Optional<PatientResponse> getPatientResponse = patientService.getPatientById(id);
     return getPatientResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
 
@@ -44,26 +44,32 @@ public class PatientController {
    */
   @GetMapping("/getPatientsByBirthDateRange")
   //GET /api/patients/getPatientsByBirthDateRange?from=1980-01-01&to=1990-12-31
-  public ResponseEntity<List<GetPatientResponse>> getPatientsByBirthDateRange(@RequestParam LocalDate from, @RequestParam LocalDate to) {
-    List<GetPatientResponse> getPatientResponseList = patientService.getPatientsByBirthDateRange(from, to);
+  public ResponseEntity<List<PatientResponse>> getPatientsByBirthDateRange(@RequestParam LocalDate from, @RequestParam LocalDate to) {
+    List<PatientResponse> getPatientResponseList = patientService.getPatientsByBirthDateRange(from, to);
     return getPatientResponseList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(getPatientResponseList);
   }
 
   @GetMapping("/getPatientsByMedicalDepartment/{medicalDepartment}")
-  public ResponseEntity<List<GetPatientResponse>> getPatientsByMedicalDepartment(@PathVariable String medicalDepartment) {
-    List<GetPatientResponse> getPatientResponseList = patientService.getPatientsByMedicalDepartment(medicalDepartment);
+  public ResponseEntity<List<PatientResponse>> getPatientsByMedicalDepartment(@PathVariable String medicalDepartment) {
+    List<PatientResponse> getPatientResponseList = patientService.getPatientsByMedicalDepartment(medicalDepartment);
     return getPatientResponseList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(getPatientResponseList);
   }
 
   @GetMapping("/getPatientsByMedicalStatus/{status}") //status OFF = 2
-  public ResponseEntity<List<GetPatientResponse>> getPatientsByMedicalStatus(@PathVariable int status) {
-    List<GetPatientResponse> getPatientResponseList = patientService.getPatientsByMedicalStatus(status);
+  public ResponseEntity<List<PatientResponse>> getPatientsByMedicalStatus(@PathVariable int status) {
+    List<PatientResponse> getPatientResponseList = patientService.getPatientsByMedicalStatus(status);
     return getPatientResponseList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(getPatientResponseList);
   }
 
   @PostMapping("/createPatient")
-  public ResponseEntity<PostPatientResponse> createPatient(@RequestBody @Valid PostPatientRequest postPatientRequest) {
-    Optional<PostPatientResponse> postPatientResponse = patientService.createPatient(postPatientRequest);
+  public ResponseEntity<PatientResponse> createPatient(@RequestBody @Valid PostPatientRequest postPatientRequest) {
+    Optional<PatientResponse> postPatientResponse = patientService.createPatient(postPatientRequest);
     return postPatientResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @PutMapping("/updatePatient/{id}")
+  public ResponseEntity<PatientResponse> updatePatient(@PathVariable Long id, @RequestBody UpdatePatientRequest updatePatientRequest){
+    Optional<PatientResponse> updatePatientResponse = patientService.updatePatient(id, updatePatientRequest);
+    return updatePatientResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
 }
